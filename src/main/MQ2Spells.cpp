@@ -1575,9 +1575,10 @@ static int CalcMaxSpellLevel(int calc, int64_t base, int64_t max, int tick, int 
 	return MAX_PC_LEVEL;
 }
 
-static int CalcMinSpellLevel(EQ_Spell* pSpell)
+// Exported by mq/api/Spells.h
+int CalcMinSpellLevel(EQ_Spell* pSpell)
 {
-	int minspelllvl = pSpell->GetSpellLevelNeeded(Warrior);
+	int minspelllvl = 255;
 
 	for (int j = Warrior; j <= Berserker; j++)
 	{
@@ -3652,11 +3653,23 @@ bool HasSPA(EQ_Spell* pSpell, eEQSPA eSPA, bool bIncrease)
 	if (!pSpell)
 		return false;
 
-	// in general, if we have a base, then we have found the SPA and it exists on this spell
-	// however, we need to do a few other checks for things that might be an increase or decrease
-	int base = pSpell->SpellAffectBase(eSPA);
-	if (base == 0)
+	const SpellAffectData* spellAffect = nullptr;
+	for (int index = 0; index < pSpell->GetNumEffects(); ++index)
+	{
+		if (const SpellAffectData* sad = pSpell->GetSpellAffectByIndex(index))
+		{
+			if (sad->Attrib == eSPA)
+			{
+				spellAffect = sad;
+				break;
+			}
+		}
+	}
+
+	if (spellAffect == nullptr)
 		return false;
+
+	auto base = spellAffect->Base;
 
 	switch (eSPA)
 	{

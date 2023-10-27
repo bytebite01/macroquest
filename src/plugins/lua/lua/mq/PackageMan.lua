@@ -1,5 +1,5 @@
-PackageMan = { _version = '1.0', author = 'Knightly' }
--- This script uses ImguiHelper which currently relies on mq, so we can bring this in for ease of 
+local PackageMan = { _version = '1.1' }
+-- This script uses ImguiHelper which currently relies on mq, so we can bring this in for ease of
 -- other functions (like paths)
 local mq = require('mq')
 
@@ -7,27 +7,22 @@ local mq = require('mq')
 PackageMan.repoUrl = 'https://luarocks.macroquest.org/'
 PackageMan.repoName = 'MacroQuest'
 
--- Make includes relative to this directory (preferring those found here)
-local scriptPath = (debug.getinfo(1, "S").source:sub(2)):match("(.*[\\|/]).*$")
-local package_path_inc = scriptPath .. '?.lua'
-
-if not string.find(package.path, package_path_inc) then
-    package.path = package_path_inc .. ';' .. package.path
-end
-
 -- Requirements
-local ImguiHelper = require('ImguiHelper')
-local Utils = require('Utils')
+local ImguiHelper = require('mq/ImguiHelper')
+local Utils = require('mq/Utils')
 
 -- Internal settings
-local mqRepoUrl = 'https://luarocks.macroquest.org/'
+local jitVersion = Utils.String.Split(jit.version, ' ')[2]
+local mqRepoUrl = 'https://luarocks.macroquest.org/' .. jitVersion .. '/'
 local mqRepoName = 'MacroQuest'
---- luarocks --lua-version 5.1 --only-server "https://luarocks.macroquest.org/" install --deps-mode none --tree modules\luarocks lsqlite3complete
+PackageMan.repoUrl = mqRepoUrl
+
+printf("PackageMan: Using LuaRocks repository '%s'", PackageMan.repoUrl)
+
+--- luarocks --lua-version 5.1 --only-server "https://luarocks.macroquest.org/2.1.0-beta3/" install --deps-mode none --tree modules\2.1.0-beta3\luarocks lsqlite3
 local cliVersionArg = Utils.String.Split(_VERSION, ' ')[2]
 local cliLuarocksPath = mq.TLO.MacroQuest.Path() .. '\\luarocks.exe'
-local cliInstallPath = mq.TLO.Lua.Dir('modules')() .. '\\luarocks'
-
--- Local functions
+local cliInstallPath = string.format("%s\\%s\\luarocks", mq.TLO.Lua.Dir('modules')(), jitVersion)
 
 -- Exposed functions
 
@@ -84,7 +79,7 @@ PackageMan.Install = function(package_name)
     return 0
 end
 
----@param package_name string The package name
+---@param package_name string The package name from luarocks
 ---@param require_name? string The package internal export name
 ---@return nil | any
 PackageMan.InstallAndLoad = function(package_name, require_name)
@@ -97,9 +92,9 @@ PackageMan.InstallAndLoad = function(package_name, require_name)
     return nil
 end
 
----@param package_name string The package name
+---@param package_name string The package name from luarocks
 ---@param require_name? string The package internal export name
----@param fail_message? string Oevrride fail message if package fails to load
+---@param fail_message? string Override fail message if package fails to load
 ---@return any
 PackageMan.Require = function(package_name, require_name, fail_message)
     require_name = require_name or package_name
@@ -112,12 +107,12 @@ PackageMan.Require = function(package_name, require_name, fail_message)
     end
 
     if package_name then
-        local package = Utils.Library.Include(require_name)
-        if not package then
-            package = PackageMan.InstallAndLoad(package_name, require_name)
+        local my_package = Utils.Library.Include(require_name)
+        if not my_package then
+            my_package = PackageMan.InstallAndLoad(package_name, require_name)
         end
-        if package then
-            return package
+        if my_package then
+            return my_package
         end
     end
 

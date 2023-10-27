@@ -1,3 +1,81 @@
+Oct 21, 2023:
+- tlo: Add Inventory TLO (currently only has the Bank datatype)
+- Inventory.Bank has members: BagSlots, FreeSlots, TotalSlots, and each currency
+- See https://docs.macroquest.org/reference/top-level-objects/tlo-inventory/
+
+Oct 18, 2023:
+- live: Updated for latest patch
+- live: Additional servers that are no longer flagged as truebox are now supported
+
+Oct 15, 2023:
+- Fix double input on imgui windows
+
+Oct 14, 2023:
+- test: updated for latest patch
+- Added DX11 support and re-enabled the ImGui overlay. Nav rendering is still disabled.
+
+Sep 25, 2023:
+- live: Update eqlib, should fix reading some game options. (#755, #756)
+
+Sep 21, 2023:
+- Fix crash in CDragonHoardWnd and CBarterSearchWnd.
+- test: Fix crash in GetMembershipLevel
+
+Sep 20, 2023:
+- live: updated for latest patch
+- Fixed calculation of HasSPA, which should fix some properties such as Me.Silenced (#739)
+- Expand the coverage of game feature and claim data (developer tools)
+- Lifetime All-access should now appear as GOLD in ${Me.Subscription} instead of UNKNOWN
+
+Aug 26, 2023:
+- test: updated for latest patch
+
+Aug 24, 2023:
+- live: updated for latest patch
+
+Aug 16, 2023:
+- live: updated for latest patch
+
+Aug 12, 2023:
+- test: updated for latest patch
+
+Aug 10, 2023:
+- autologin: Add AutoLogin TLO to provide access to profile data (#737)
+- lua: add mq.getAllGroundItems (#740)
+- lua: Fix some issues caused by errors while requiring a file
+- window datatype: Add Window.SetText, which can be used to change the
+  contents of edit controls
+
+Jul 19, 2023:
+- live: Updated for patch
+- Add FreeGrab to AdvLootType (#733)
+- Hotkey will now restore minimized window (#735)
+
+Jul 10, 2023:
+- test: updated for test patch
+
+Jul 8, 2023:
+- Fix PackageMan issue with loading submodules in a single line
+
+Jul 6, 2023:
+- Fix scoping issues in PackageMan causing lua errors (#731)
+
+Jun 29, 2023:
+- test: updated for test patch
+
+Jun 26, 2023:
+- Fix CTextureAnimation (#729). This should fix ImGui drawing of game icons
+- Fix MQMouseInfo, should fix crashes with /mouseto (#698).
+- Fix overlay blocking input while it is hidden (#699).
+- lua: Disallow the use of mq.delay while a module is being imported (#730)
+- Add spell.MinCasterLevel to report the minimum class level of a spell (#722).
+
+June 21, 2023:
+- live: Updated for live patch
+
+June 19, 2023:
+- test: Updated for test patch
+
 May 24, 2023:
 - live: Updated for live patch
 
