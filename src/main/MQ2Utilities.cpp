@@ -391,6 +391,7 @@ const char* GetArg(char* szDest, const char* szSrc, int dwNumber, bool LeaveQuot
 
 	bool CustomSep = false;
 	bool InQuotes = false;
+	bool Escaped = false;
 
 	const char* szTemp = szSrc;
 
@@ -423,7 +424,7 @@ const char* GetArg(char* szDest, const char* szSrc, int dwNumber, bool LeaveQuot
 			return szDest;
 		}
 
-		if (szTemp[i] == '"')
+		if (szTemp[i] == '"' && !Escaped)
 		{
 			InQuotes = !InQuotes;
 			if (LeaveQuotes)
@@ -434,8 +435,17 @@ const char* GetArg(char* szDest, const char* szSrc, int dwNumber, bool LeaveQuot
 		}
 		else
 		{
-			szDest[j] = szTemp[i];
-			j++;
+			// If I am an escape slash and not alredy escaped (to handle \\), skip this char but enable escape for next char
+			if (!Escaped && szTemp[i] == '\\') {
+				Escaped = true;
+			}
+			else
+			{
+				// If I am escaped, copy this char no matter what it is and set escape to false.
+				szDest[j] = szTemp[i];
+				j++;
+				Escaped = false;
+			}
 		}
 		i++;
 	}
